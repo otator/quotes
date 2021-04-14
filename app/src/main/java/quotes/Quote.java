@@ -1,7 +1,5 @@
 package quotes;
 
-import java.util.Objects;
-
 public class Quote {
     String author;
     String text;
