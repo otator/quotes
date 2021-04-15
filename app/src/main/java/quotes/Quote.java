@@ -1,34 +1,34 @@
 package quotes;
 
 public class Quote {
-    String author;
-    String text;
+    String quoteAuthor;
+    String quoteText;
 
-    public String getAuthor() {
-        return author;
+    public String getQuoteAuthor() {
+        return quoteAuthor;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setQuoteAuthor(String quoteAuthor) {
+        this.quoteAuthor = quoteAuthor;
     }
 
-    public String getText() {
-        return text;
+    public String getQuoteText() {
+        return quoteText;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setQuoteText(String quoteText) {
+        this.quoteText = quoteText;
     }
 
     public Quote(String author, String text) {
-        this.author = author;
-        this.text = text;
+        this.quoteAuthor = author;
+        this.quoteText = text;
     }
 
     @Override
     public String toString() {
-        return  "author: " + author +
-                "\ntext: " + text;
+        return  "Author: " + quoteAuthor +
+                "\nText: " + quoteText;
     }
 
 }

@@ -10,10 +10,10 @@ public class AppTest {
     @Test public void testJsonHasQuote() {
         App classUnderTest = new App();
         //create a quote
-        Quote q = new Quote("Ron Swanson", "Just give me all the bacon and eggs you have." +
+        LQuote q = new LQuote("Ron Swanson", "Just give me all the bacon and eggs you have." +
                 " Wait...wait. I worry what you just heard was: Give me a lot of bacon and eggs." +
                 " What I said was: Give me all the bacon and eggs you have. Do you understand?");
-        Quote[] listOfQuotes = App.readJson("../app/src/main/resources/recentquotes.json");
+        LQuote[] listOfQuotes = App.readJson("../app/src/main/resources/recentquotes.json");
         assertTrue(App.isFound(listOfQuotes, q));
     }
 }

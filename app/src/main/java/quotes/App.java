@@ -15,40 +15,34 @@ public class App {
         if (System.getProperty("user.dir").endsWith("p"))
             path = "../" + path;
 
-        Quote[] quotes = readJson(path);
-//
-//        if (args.length > 0){
-//            String author = makeAuthorName(args);
-//            String quote = getQuote(quotes, author);
-//            if(quote!= null)
-//                System.out.println("\u001B[32mQuote by "+ author + " is: " + quote);
-//            else
-//                System.out.println("\u001B[31mThere is no such author '" + author + "'");
-//        }
 
-//        final String URL = "http://api.forismatic.com/api/1.0/?method=getQuote&format=json&lang=en";
-//        final String URL = "https://favqs.com/api/qotd";
-        String URL ="https://ron-swanson-quotes.herokuapp.com/v2/quotes";
-        final String API_KEY = "aefb316b10c442bb09205032cad69475";
+        final String URL = "http://api.forismatic.com/api/1.0/?method=getQuote&format=json&lang=en";
         try{
-            HttpURLConnection connection = connect(URL, API_KEY);
-//            System.out.println(connection.getResponseCode());
+            HttpURLConnection connection = connect(URL, "key", "POST");
             if(connection.getResponseCode() == 200){
-                System.out.println("\u001BAPI Random Quote");
+                System.out.println("\u001B[35mAPI Random Quote");
                 BufferedReader reader = readResponse(connection);
                 String json = getJson(reader);
-                Quote[] quote = getJsonObject(json);
-                System.out.println(quote[0]);
+                Quote quote = getJsonObject(json);
+                System.out.println("\u001B[0m"+quote);
             }else{
-                // random quote from local json file (recentquotes.json).
-                int randomIndex = randomQuoteIndex(0, quotes.length);
-                System.out.println();
-                System.out.println("\u001B[35mLocal Random Quote");
-                System.out.println("\u001B[0m"+quotes[randomIndex]);
-
+                System.out.println("Error, status code is: " + connection.getResponseCode());
             }
         }catch (IOException e){
-            e.printStackTrace();
+            // random quote from local json file (recentquotes.json).
+            LQuote[] quotes = readJson(path);
+            if (args.length > 0){
+                String quoteAuthor = makeAuthorName(args);
+                String quote = getQuote(quotes, quoteAuthor);
+                if(quote!= null)
+                    System.out.println("\u001B[32mQuote by "+ quoteAuthor + " is: " + quote);
+                else
+                    System.out.println("\u001B[31mThere is no such quoteAuthor '" + quoteAuthor + "'");
+            }
+            int randomIndex = randomQuoteIndex(0, quotes.length);
+            System.out.println();
+            System.out.println("\u001B[35mLocal Random Quote");
+            System.out.println("\u001B[0m"+quotes[randomIndex]);
         }
     }
 
@@ -56,27 +50,27 @@ public class App {
         return (int) (Math.random() * max) + min;
     }
 
-    public static Quote[] readJson(String path){
+    public static LQuote[] readJson(String path){
         Gson gson = new Gson();
-        Quote[] quotes = null;
+        LQuote[] quotes = null;
         try{
             FileReader reader = new FileReader(path);
-            quotes = gson.fromJson(reader, Quote[].class);
+            quotes = gson.fromJson(reader, LQuote[].class);
         }catch(IOException e){
             System.out.println(e.getMessage());
         }
         return quotes;
     }
-    public static boolean isFound(Quote[] quotes, Quote quote){
-        for(Quote q: quotes){
+    public static boolean isFound(LQuote[] quotes, LQuote quote){
+        for(LQuote q: quotes){
             if(q.getAuthor().equals(quote.getAuthor()))
                 return true;
         }
         return false;
     }
 
-    public static String getQuote(Quote[] quotes,String author){
-        for (Quote quote: quotes){
+    public static String getQuote(LQuote[] quotes,String author){
+        for (LQuote quote: quotes){
             if (quote.getAuthor().equals(author))
                 return quote.getText();
         }
@@ -97,11 +91,14 @@ public class App {
         return new BufferedReader(inputStreamReader);
     }
 
-    public static HttpURLConnection connect(String apiUrl,String apiKey) throws IOException{
+    public static HttpURLConnection connect(String apiUrl,String apiKey, String method) throws IOException{
         URL url = new URL(apiUrl);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        con.setRequestMethod("GET");
-//        con.setRequestProperty("Authorization", "Token token=" + apiKey);
+        con.setRequestMethod(method);
+        con.setRequestProperty("Content-Type", "application/json");
+//        con.setRequestProperty("Authorization",apiKey);
+        con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.29 Safari/537.36");
+
         return con;
     }
 
@@ -114,9 +111,9 @@ public class App {
         return builder.toString();
     }
 
-    public static Quote[] getJsonObject(String response){
+    public static Quote getJsonObject(String response){
         Gson gson = new Gson();
-        return gson.fromJson(response, Quote[].class);
+        return gson.fromJson(response, Quote.class);
     }
 
 }
